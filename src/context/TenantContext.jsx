@@ -464,7 +464,7 @@ export const TenantProvider = ({ children }) => {
 
     // Save real tenant to Supabase
     if (supabase) {
-      await supabase.from('tenants').insert([{
+      const { error: tenantErr } = await supabase.from('tenants').insert([{
         id: tenantUuid,
         name: configData.name,
         city: configData.city,
@@ -473,6 +473,11 @@ export const TenantProvider = ({ children }) => {
         phone: configData.phone,
         email: onboardingUser.email
       }]);
+
+      if (tenantErr) {
+        console.error("❌ Création du tenant Supabase :", tenantErr.message);
+        throw tenantErr;
+      }
     }
 
     // Append new tenant to list
@@ -503,6 +508,20 @@ export const TenantProvider = ({ children }) => {
     const updatedUsers = [...demoUsers, newUserObj];
     setDemoUsers(updatedUsers);
     setLocalStore('onyx_users_list', updatedUsers);
+
+    // Bascule effectivement sur le tenant et l'utilisateur qui viennent d'être créés.
+    // Sans ceci, l'écran reste bloqué sur le tenant démo par défaut (bug de connexion
+    // au mauvais compte à la fin de l'inscription).
+    setActiveTenant(newTenantObj);
+    setSubscriptionData(supabaseSim.checkSubscriptionStatus(newTenantObj.id));
+    const activatedUser = {
+      ...newUserObj,
+      id: currentUser?.id || newUserObj.id,
+      tenant_id: tenantUuid
+    };
+    setCurrentUser(activatedUser);
+    supabaseSim.setSessionUser(activatedUser);
+    localStorage.setItem('onyx_demo_user_id', newUserObj.id);
 
     // Complete onboarding
     setOnboardingStep(null);

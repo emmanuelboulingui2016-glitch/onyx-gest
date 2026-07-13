@@ -178,7 +178,9 @@ export const Onboarding = () => {
     }
   };
 
-  const handleConfigSubmit = (e) => {
+  const [isSavingConfig, setIsSavingConfig] = useState(false);
+
+  const handleConfigSubmit = async (e) => {
     e.preventDefault();
     if (!companyName || !address) {
       alert("Veuillez remplir tous les champs obligatoires.");
@@ -196,7 +198,16 @@ export const Onboarding = () => {
       logoText: companyName.slice(0, 3).toUpperCase()
     };
 
-    simulatedSaveConfig(configData);
+    setErrorMsg('');
+    setIsSavingConfig(true);
+    try {
+      await simulatedSaveConfig(configData);
+    } catch (err) {
+      console.error("❌ Onboarding Config Error:", err);
+      setErrorMsg(translateSupabaseError(err));
+    } finally {
+      setIsSavingConfig(false);
+    }
   };
 
   const handleLogoUploadSim = (e) => {
@@ -359,6 +370,12 @@ export const Onboarding = () => {
           <form onSubmit={handleConfigSubmit} style={styles.form}>
             <div style={styles.stepIndicator}>Étape 3 : Configuration de l'Entreprise</div>
 
+            {errorMsg && (
+              <div style={styles.errorBox}>
+                <span>⚠️ {errorMsg}</span>
+              </div>
+            )}
+
             <div style={styles.row}>
               <div style={styles.col}>
                 <label className="onyx-label">Nom de l'entreprise</label>
@@ -474,8 +491,8 @@ export const Onboarding = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn-success" style={{ justifyContent: 'center', marginTop: '10px' }}>
-              Finaliser et Créer l'Espace Onyx Gest
+            <button type="submit" className="btn-success" style={{ justifyContent: 'center', marginTop: '10px' }} disabled={isSavingConfig}>
+              {isSavingConfig ? "Création de l'espace..." : "Finaliser et Créer l'Espace Onyx Gest"}
             </button>
           </form>
         )}

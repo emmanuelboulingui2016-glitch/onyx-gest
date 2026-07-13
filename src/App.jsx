@@ -3,6 +3,8 @@ import { TenantProvider, useTenant } from './context/TenantContext';
 import { translations } from './utils/translations';
 import { supabase } from './utils/supabaseClient';
 import { Dashboard } from './components/Dashboard';
+import { DashboardDirigeant } from './components/DashboardDirigeant';
+import { SaisieRapideEcritures } from './components/SaisieRapideEcritures';
 import { Facturation } from './components/Facturation';
 import { Relances } from './components/Relances';
 import { SecurityPanel } from './components/SecurityPanel';
@@ -104,7 +106,7 @@ function MainAppContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const APP_VERSION = '1.0.6';
+  const APP_VERSION = '1.1.0';
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersionInfo, setNewVersionInfo] = useState(null);
 
@@ -222,6 +224,8 @@ function MainAppContent() {
   };
 
   const isAdminUser = currentUser?.role === 'factory_admin';
+  const isDirigeant = currentUser?.role === 'client_manager';
+  const isComptableUser = currentUser?.role === 'comptable' || isAdminUser;
 
   const handleStartOnboarding = () => {
     startOnboardingSim();
@@ -376,7 +380,9 @@ function MainAppContent() {
   const renderContent = () => {
     // Redirection and mapping based on user role to enforce ethical data separation
     if (currentTab === 'dashboard') {
-      return isAdminUser ? <AdminConsole /> : <Dashboard />;
+      if (isAdminUser) return <AdminConsole />;
+      if (isDirigeant) return <DashboardDirigeant onNavigateToRelances={() => setCurrentTab('relances')} />;
+      return <Dashboard onOpenComptabilite={isComptableUser ? () => setCurrentTab('comptabilite') : null} />;
     }
 
     switch (currentTab) {
@@ -386,6 +392,23 @@ function MainAppContent() {
         return <ClientManagement />;
       case 'relances':
         return <Relances />;
+      case 'comptabilite':
+        // Route guard : réservé au rôle comptable et à l'administrateur plateforme
+        if (!isComptableUser) {
+          return (
+            <div style={styles.accessDenied}>
+              <div style={styles.accessDeniedIcon}>🔒</div>
+              <h2 style={styles.accessDeniedTitle}>Accès Refusé</h2>
+              <p style={styles.accessDeniedMsg}>
+                Ce panneau est réservé aux comptables et aux administrateurs techniques.
+              </p>
+              <p style={{ fontSize: '0.8rem', color: '#9CA3AF', marginTop: '8px' }}>
+                Code : <code>RBAC_403 — Insufficient permissions for role: {currentUser?.role}</code>
+              </p>
+            </div>
+          );
+        }
+        return <SaisieRapideEcritures />;
       case 'securite':
         // Route guard : seul l'Admin 241 Code Factory peut accéder à ce panneau
         if (!isAdminUser) {
@@ -435,7 +458,9 @@ function MainAppContent() {
           </div>
         );
       default:
-        return isAdminUser ? <AdminConsole /> : <Dashboard />;
+        if (isAdminUser) return <AdminConsole />;
+        if (isDirigeant) return <DashboardDirigeant onNavigateToRelances={() => setCurrentTab('relances')} />;
+        return <Dashboard onOpenComptabilite={isComptableUser ? () => setCurrentTab('comptabilite') : null} />;
     }
   };
 
@@ -559,6 +584,20 @@ function MainAppContent() {
             </>
           )}
 
+          {/* Comptabilité — réservée au rôle comptable et à l'administrateur plateforme */}
+          {isComptableUser && (
+            <button
+              onClick={() => setCurrentTab('comptabilite')}
+              style={{
+                ...styles.navItem,
+                ...(currentTab === 'comptabilite' ? styles.navItemActive : {})
+              }}
+            >
+              <span style={styles.navIcon}>🧮</span>
+              <span>Comptabilité</span>
+            </button>
+          )}
+
           {/* Route guard: Sécurité & RLS SQL — ADMIN ONLY, never rendered for client_manager role */}
           {isAdminUser && (
             <button 
@@ -638,7 +677,7 @@ function MainAppContent() {
             >
               {demoUsers.map(user => (
                 <option key={user.id} value={user.id}>
-                  {user.name} ({user.role === 'factory_admin' ? 'Admin' : 'Client'})
+                  {user.name} ({user.role === 'factory_admin' ? 'Admin' : user.role === 'comptable' ? 'Comptable' : 'Client'})
                 </option>
               ))}
             </select>

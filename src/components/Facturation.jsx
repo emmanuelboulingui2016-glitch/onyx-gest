@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTenant } from '../context/TenantContext';
 import { supabaseSim } from '../utils/supabaseSim';
+import { generateEcritureFromInvoiceIssued, generateEcritureFromPayment } from '../utils/accounting';
 
 export const Facturation = () => {
   const { activeTenant, syncTrigger } = useTenant();
@@ -139,12 +140,41 @@ export const Facturation = () => {
           status: 'officiel'
         };
         supabaseSim.createInvoice(activeTenant.id, updated);
+
+        // Génération automatique de l'écriture comptable (Débit 411 / Crédit 701+4431)
+        try {
+          generateEcritureFromInvoiceIssued(activeTenant.id, updated);
+        } catch (accErr) {
+          console.error("❌ Génération de l'écriture comptable :", accErr);
+        }
+
         setPreviewInvoice(updated);
         alert(`✅ La facture ${inv.number} a été officiellement émise et figée !`);
         loadInvoices();
       } catch (err) {
         console.error(err);
         alert("Une erreur est survenue lors de la validation du document.");
+      }
+    }
+  };
+
+  const handleMarkAsPaid = (inv) => {
+    if (window.confirm(`Confirmer l'encaissement de la facture ${inv.number} (${formatFCFA(inv.amount)}) ?`)) {
+      try {
+        supabaseSim.updateInvoiceStatus(activeTenant.id, inv.id, 'paye');
+
+        // Génération automatique de l'écriture comptable (Débit 512 / Crédit 411) + lettrage
+        try {
+          generateEcritureFromPayment(activeTenant.id, inv);
+        } catch (accErr) {
+          console.error("❌ Génération de l'écriture d'encaissement :", accErr);
+        }
+
+        alert(`✅ Facture ${inv.number} marquée comme payée.`);
+        loadInvoices();
+      } catch (err) {
+        console.error(err);
+        alert("Une erreur est survenue lors de l'encaissement.");
       }
     }
   };
@@ -315,12 +345,22 @@ export const Facturation = () => {
                     Visualiser
                   </button>
                   {inv.type === 'devis' && (
-                    <button 
-                      onClick={() => handleTransformToInvoice(inv)} 
-                      className="btn-success" 
+                    <button
+                      onClick={() => handleTransformToInvoice(inv)}
+                      className="btn-success"
                       style={{ ...styles.btnActionSmall, marginLeft: '6px' }}
                     >
                       Facturer
+                    </button>
+                  )}
+                  {inv.type === 'facture' && (inv.status === 'officiel' || inv.status === 'en_retard') && (
+                    <button
+                      onClick={() => handleMarkAsPaid(inv)}
+                      className="btn-success"
+                      style={{ ...styles.btnActionSmall, marginLeft: '6px' }}
+                      title="Enregistrer l'encaissement et générer l'écriture comptable"
+                    >
+                      💵 Encaisser
                     </button>
                   )}
                 </div>

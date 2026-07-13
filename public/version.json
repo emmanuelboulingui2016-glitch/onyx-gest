@@ -1,5 +1,5 @@
 {
-  "version": "1.0.6",
-  "releasedAt": "2026-06-29T14:30:00Z",
-  "changelog": "Intégration finale des codes d'activation courts onyx-XXXX via hachage UUID."
+  "version": "1.1.0",
+  "releasedAt": "2026-07-13T19:30:00Z",
+  "changelog": "Nouveau module Comptabilité SYSCOHADA : écritures en partie double générées automatiquement depuis vos factures, tableau de bord Dirigeant simplifié et saisie rapide pour votre comptable."
 }

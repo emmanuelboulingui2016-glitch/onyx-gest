@@ -49,6 +49,13 @@ export const INITIAL_DEMO_USERS = [
     role: 'factory_admin',
     roleLabel: 'Administrateur Plateforme',
     tenant_id: 'tenant_onyx_dist_1'
+  },
+  {
+    id: 'user_comptable_4',
+    name: 'Alain Bongo',
+    role: 'comptable',
+    roleLabel: 'Comptable',
+    tenant_id: 'tenant_onyx_dist_1'
   }
 ];
 

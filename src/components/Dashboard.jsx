@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTenant } from '../context/TenantContext';
 import { supabaseSim } from '../utils/supabaseSim';
 
-export const Dashboard = () => {
+export const Dashboard = ({ onOpenComptabilite }) => {
   const { activeTenant } = useTenant();
   const [invoices, setInvoices] = useState([]);
   const [metrics, setMetrics] = useState({
@@ -75,7 +75,13 @@ export const Dashboard = () => {
             <span style={styles.shieldIcon}>🛡️</span>
             <span style={styles.backupText}>Protection : Données sauvegardées en temps réel sur le cloud</span>
           </div>
-          
+
+          {onOpenComptabilite && (
+            <button onClick={onOpenComptabilite} className="btn-secondary" style={{ fontSize: '0.82rem' }}>
+              🧮 Espace Comptable
+            </button>
+          )}
+
           <div style={styles.tenantBadge}>
             <span style={styles.tenantDot}></span>
             ID Tenant: <span className="data-mono" style={styles.tenantIdText}>{activeTenant.id}</span>

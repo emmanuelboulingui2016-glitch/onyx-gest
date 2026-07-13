@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+:root {
+  --color-bg-start: #0A0A0A;
+  --color-bg-end: #051015;
+  --color-accent-green: #10B981;
+  --color-accent-yellow: #F59E0B;
+  --color-accent-blue: #3B82F6;
+  
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #9CA3AF;
+  
+  --color-card-bg: rgba(10, 10, 10, 0.6);
+  --color-border: rgba(59, 130, 246, 0.15); /* Subtly tinted blue border */
+  --color-border-active: rgba(59, 130, 246, 0.4);
+  
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  font-size: 15px;
+  color-scheme: dark;
+}
+
+body.light-theme {
+  --color-bg-start: #FFFFFF;
+  --color-bg-end: #F0F4F8;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #5C6A79;
+  --color-card-bg: rgba(255, 255, 255, 0.85);
+  --color-border: rgba(59, 130, 246, 0.12);
+  --color-border-active: rgba(59, 130, 246, 0.35);
+  color-scheme: light;
+}
+
+/* Specific overrides for light theme to look premium */
+body.light-theme .onyx-card {
+  background: var(--color-card-bg) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+body.light-theme .onyx-card:hover {
+  border-color: var(--color-border-active) !important;
+  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+body.light-theme .onyx-input, body.light-theme .onyx-select {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-primary) !important;
+}
+
+body.light-theme .onyx-input:focus, body.light-theme .onyx-select:focus {
+  border-color: var(--color-accent-blue) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+body.light-theme .onyx-label {
+  color: var(--color-text-secondary) !important;
+}
+
+body.light-theme h1, body.light-theme h2, body.light-theme h3, body.light-theme h4, body.light-theme h5, body.light-theme h6 {
+  color: var(--color-text-primary) !important;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+}
+
+body {
+  background: radial-gradient(circle at center, var(--color-bg-start) 0%, var(--color-bg-end) 100%);
+  background-attachment: fixed;
+  color: var(--color-text-secondary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-blue);
+}
+
+/* Typography Utility Classes */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* High-end modern console-style cards */
+.onyx-card {
+  background: var(--color-card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.onyx-card:hover {
+  border-color: var(--color-border-active);
+  box-shadow: 0 4px 35px rgba(59, 130, 246, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Custom interactive UI buttons */
+.btn-primary {
+  background: var(--color-accent-blue);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-success {
+  background: var(--color-accent-green);
+  color: #0A0A0A;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.btn-success:hover {
+  background: #34d399;
+  transform: translateY(-1px);
+}
+.btn-success:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-border-active);
+}
+
+/* Monospace data display */
+.data-mono {
+  font-family: var(--font-mono);
+}
+
+/* Input elements */
+.onyx-input, .onyx-select {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.onyx-input:focus, .onyx-select:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+.onyx-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+/* Printing styles */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .onyx-card {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}

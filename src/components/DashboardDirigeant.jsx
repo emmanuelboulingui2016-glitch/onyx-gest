@@ -5,7 +5,7 @@ import { getIndicateursDirigeant } from '../utils/accounting';
 
 // Vue Dirigeant : zéro jargon comptable, gros chiffres, une couleur = un sens.
 // Voir ONYX_GEST_MODULE_COMPTABILITE_COMPLET.md, Partie B.
-export const DashboardDirigeant = ({ onNavigateToRelances }) => {
+export const DashboardDirigeant = ({ onNavigateToRelances, onOpenComptabilite }) => {
   const { activeTenant } = useTenant();
   const [indicateurs, setIndicateurs] = useState({
     argentDisponible: 0, onVousDoit: 0, vousDevez: 0, resteMois: 0
@@ -40,8 +40,17 @@ export const DashboardDirigeant = ({ onNavigateToRelances }) => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Tableau de Bord</h1>
-        <p style={styles.subtitle}>{activeTenant.name} — {activeTenant.city}</p>
+        <div style={styles.headerRow}>
+          <div>
+            <h1 style={styles.title}>Tableau de Bord</h1>
+            <p style={styles.subtitle}>{activeTenant.name} — {activeTenant.city}</p>
+          </div>
+          {onOpenComptabilite && (
+            <button className="btn-secondary" style={styles.btnComptabilite} onClick={onOpenComptabilite}>
+              🧮 Espace Comptable
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 4 cartes principales, toujours visibles */}
@@ -143,6 +152,16 @@ const styles = {
   header: {
     borderBottom: '1px solid rgba(59, 130, 246, 0.1)',
     paddingBottom: '16px'
+  },
+  headerRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: '16px',
+    flexWrap: 'wrap'
+  },
+  btnComptabilite: {
+    whiteSpace: 'nowrap'
   },
   title: {
     fontSize: '1.8rem',

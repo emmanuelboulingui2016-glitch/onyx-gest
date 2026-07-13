@@ -225,7 +225,7 @@ function MainAppContent() {
 
   const isAdminUser = currentUser?.role === 'factory_admin';
   const isDirigeant = currentUser?.role === 'client_manager';
-  const isComptableUser = currentUser?.role === 'comptable' || isAdminUser;
+  const isComptableUser = currentUser?.role === 'comptable' || isDirigeant || isAdminUser;
 
   const handleStartOnboarding = () => {
     startOnboardingSim();
@@ -381,7 +381,7 @@ function MainAppContent() {
     // Redirection and mapping based on user role to enforce ethical data separation
     if (currentTab === 'dashboard') {
       if (isAdminUser) return <AdminConsole />;
-      if (isDirigeant) return <DashboardDirigeant onNavigateToRelances={() => setCurrentTab('relances')} />;
+      if (isDirigeant) return <DashboardDirigeant onNavigateToRelances={() => setCurrentTab('relances')} onOpenComptabilite={() => setCurrentTab('comptabilite')} />;
       return <Dashboard onOpenComptabilite={isComptableUser ? () => setCurrentTab('comptabilite') : null} />;
     }
 
@@ -459,7 +459,7 @@ function MainAppContent() {
         );
       default:
         if (isAdminUser) return <AdminConsole />;
-        if (isDirigeant) return <DashboardDirigeant onNavigateToRelances={() => setCurrentTab('relances')} />;
+        if (isDirigeant) return <DashboardDirigeant onNavigateToRelances={() => setCurrentTab('relances')} onOpenComptabilite={() => setCurrentTab('comptabilite')} />;
         return <Dashboard onOpenComptabilite={isComptableUser ? () => setCurrentTab('comptabilite') : null} />;
     }
   };
@@ -505,7 +505,7 @@ function MainAppContent() {
               }}
               title={isAdminUser ? "Cliquer pour basculer le sélecteur de Tenant" : ""}
             >
-              v1.0.6 Native Pro {adminMode && <span style={styles.adminBadge}>ADMIN</span>}
+              v{APP_VERSION} Native Pro {adminMode && <span style={styles.adminBadge}>ADMIN</span>}
             </span>
           </div>
         </div>
